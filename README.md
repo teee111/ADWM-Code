@@ -26,7 +26,7 @@ Evaluation requires the **RobotWin2.0** simulation environment. Follow the offic
 
 ## Configuration
 
-All paths and hyperparameters are defined in `configs/robotwin.yaml`. Before training or evaluation, edit this file to set at least:
+Paths and hyperparameters are defined in `configs/robotwin.yaml`. Before training or evaluation, edit this file to set at least:
 
 - **`model.vlm.checkpoint_path`** — path to the downloaded Qwen3-VL-2B-Instruct weights.
 - **`dataset.dataset_dir`** — path to your (preprocessed) RobotWin2.0 dataset.
@@ -54,7 +54,6 @@ python train_adwm.py
 | `--config` | `./configs/robotwin.yaml` | Path to the config file. |
 | `--norm_stats_path` | `./utils/stat-200-10.json` | Path to the action/state normalization statistics. |
 | `--save_dir` | `./checkpoints_vla` | Root directory for saving checkpoints. |
-| `--epochs` | `60` | Number of training epochs. |
 | `--grad_accum_steps` | `1` | Gradient accumulation steps. |
 | `--save_interval` | `5` | Save a checkpoint every N epochs. |
 | `--use_ig` | `True` | Enable the Internal Guidance (IG). |
