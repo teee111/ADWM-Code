@@ -1,0 +1,145 @@
+common:
+  # Robot dimensions
+  action_dim: 14         # Robot action dimension
+  state_dim: 16          # Robot state dimension
+  
+  action_chunk_size: 32
+  proprio_len: 1
+  
+  num_inference_steps: 10
+  action_execution_horizon: 16
+  
+
+dataset:
+  # Dataset type
+  type: "robotwin"  # Dataset type: "robotwin"
+  
+  # TODO
+  # Dataset paths 
+  dataset_dir: "xxxx/RoboTwin/data-200-10"    
+  
+  # RobotWin specific parameters
+  data_mode: "both"  # "clean", "randomized", or "both"
+  
+  camera_names: ["head_camera"]
+  
+  # Data augmentation
+  image_aug: false    # Whether to apply image augmentation
+  
+  
+  indices_config:
+    state_indices: [0]  
+    camera_indices: [0]   
+    action_indices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+
+# Model configuration
+model:
+  vlm_feat_layer: -2
+  visual_feat_layer: -4
+  
+  num_registers: 2
+  
+  use_vision_encoder_feat: true
+  dino_feat_dim: 1024
+  
+  # TODO
+  vlm:
+    checkpoint_path: "./Qwen/Qwen3-VL-2B-Instruct"
+    precision: "bfloat16"
+    frozen: true              # Whether to freeze VLM parameters
+  
+  # Action Expert configuration
+  action_expert:
+    depth: 12
+    # Architecture parameters (configurable)
+    hidden_size: 512       # Hidden dimension (must be multiple of 128 for head_dim=128)
+    num_heads: 4
+    ffn_dim_multiplier: 4   # FFN = hidden_size * multiplier
+    
+    # Normalization and regularization
+    norm_eps: 1e-5         # Layer norm epsilon
+    
+    vlm_adapter_num_queries: 64
+    
+  
+  # Understanding Expert configuration
+  und_expert:
+    # Architecture parameters (configurable)
+    hidden_size: 512        # Hidden dimension for understanding expert
+    ffn_dim_multiplier: 4   # FFN = hidden_size * multiplier
+    
+    # Normalization and regularization
+    norm_eps: 1e-5         # Layer norm epsilon
+    
+    # VLM adapter settings
+    vlm:
+      input_dim: 2048       # VLM feature dimension (input)
+      projector_type: "mlp3x_silu"  # Adapter type
+    
+  # Time distribution settings
+  time_distribution:
+    timestep_sample_method: "logit_normal"    # "logit_normal" or "uniform"
+    sigmoid_scale: 1.0                        # Controls distribution shape (higher = more concentrated around 0.5)
+    min_t: 0.0                               # Minimum time value for training
+    max_t: 1.0                               # Maximum time value for training
+    
+  # Inference settings
+  inference:
+    num_inference_timesteps: 10               # Number of denoising steps during inference
+    
+    
+  # EMA settings (not used currently)
+  ema:
+    enabled: false
+    update_after_step: 0
+    inv_gamma: 1.0
+    power: 0.75
+    min_value: 0.0
+    max_value: 0.9999
+
+# Training configuration
+training:
+  # Optimization settings
+  batch_size: 128
+  batch_size_stage1: 128
+  
+  time_sampler: "logit_normal"    # logit_normal   uniform
+  
+  max_steps: 1000000
+  learning_rate: 2e-4
+  learning_rate_finetune_stage1: 2e-4
+  weight_decay: 1e-2
+  betas: [0.9, 0.99]
+  
+  # Scheduler settings
+  scheduler_type: "linear"
+  warmup_steps: 200
+  cycle_length: 5000000   # To5al cycle length for scheduler
+  f_max: 0.99           # Maximum learning rate multiplier after warmup
+  f_min: 0.4            # Minimum learning rate multiplier at end
+  
+  # Gradient settings
+  grad_clip_norm: 0.5
+  
+# System settings
+system:
+  log_level: "INFO"
+  
+  # Intervals
+  log_interval: 1       # Log every N steps
+  save_interval: 5000    # Save every N steps  
+  val_interval: 500     # Validate every N steps
+  
+  # Hardware settings
+  num_workers: 16         # Number of dataloader workers
+  pin_memory: true       # Pin memory for faster GPU transfer
+
+# Logging settings  
+logging:
+  # Reporting - support multiple logging backends
+  report_to: "tensorboard"  # Options: "wandb", "tensorboard", "all", "none"
+
+
+
+
+
