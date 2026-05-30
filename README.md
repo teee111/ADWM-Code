@@ -26,7 +26,7 @@ Evaluation requires the **RobotWin2.0** simulation environment. Follow the offic
 
 ## Configuration
 
-Paths and hyperparameters are defined in `configs/robotwin.yaml`. Before training or evaluation, edit this file to set at least:
+Paths and hyperparameters are defined in `configs/robotwin.yaml`. Before training, edit this file to set at least:
 
 - **`model.vlm.checkpoint_path`** — path to the downloaded Qwen3-VL-2B-Instruct weights.
 - **`dataset.dataset_dir`** — path to your (preprocessed) RobotWin2.0 dataset.
